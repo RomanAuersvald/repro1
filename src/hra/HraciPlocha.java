@@ -1,12 +1,79 @@
 package hra;
 
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 public class HraciPlocha extends JPanel{
 	public static final int VYSKA = 800;
 	public static final int SIRKA = 600;
 	
 	
+	
+	//r\chlost behu pozadi
+	public static final int RYCHLOST = -2;
+	
+	
+	private BufferedImage imgPozadi;
+	private Timer casovacAnimace;
+	private boolean pauza = false;
+	private boolean hraBezi = true;
+	private int posunPozadiX = 0;
+	
+	public HraciPlocha() {
+		
+		
+		
+	}
+	
+	public void paint(Graphics g){
+		super.paint(g);
+		
+		//dve pozadi za sebe pro plynulé pøechody
+		//prvni
+		g.drawImage(imgPozadi, posunPozadiX, 0, null);
+		//druhe je posunuto o sirku obrazku
+		g.drawImage(imgPozadi, posunPozadiX+imgPozadi.getWidth(), 0, null);
+		
+		
+		
+	}
+	
+	
+	
+	private void posun(){
+		if (! pauza && hraBezi){
+			//TODO
+			
+			
+			
+			//posun pozce pozadi hraci plochy
+			posunPozadiX = posunPozadiX+HraciPlocha.RYCHLOST;
+			//kdyz se pozadi cele doposouva zacni od zacatku
+			if(posunPozadiX == -imgPozadi.getWidth()){
+				posunPozadiX = 0;
+			}	
+		}
+	}
+	
+	
+	
+	
+	
+	private void spustHru(){
+		casovacAnimace = new Timer(20, new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+	}
 	
 	
 	
