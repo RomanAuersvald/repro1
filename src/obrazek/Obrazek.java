@@ -4,10 +4,12 @@ import java.awt.Color;
 
 import hra.Hrac;
 import hra.HraciPlocha;
+import hra.Zed;
 
 public enum Obrazek {
 	HRAC("hrac", Hrac.SIRKA, Hrac.VYSKA, new Color(255,255,255)),
-	POZADI("pozadi", HraciPlocha.SIRKA*3, HraciPlocha.VYSKA, new Color(0,0,150));
+	POZADI("pozadi", HraciPlocha.SIRKA*3, HraciPlocha.VYSKA, new Color(0,0,150)),
+	ZED("zed", Zed.SIRKA, HraciPlocha.VYSKA, new Color(180,0,0));
 	
 	
 	//pocet prvku

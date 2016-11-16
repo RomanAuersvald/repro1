@@ -13,6 +13,10 @@ public class FlappyGameMain extends JFrame{
 	private static final long serialVersionUID = 1L;
 
 	public FlappyGameMain() {
+		
+		
+		
+		
 	}
 	
 	public void initGUI(){
@@ -26,11 +30,11 @@ public class FlappyGameMain extends JFrame{
 	public void spust(){
 		hp = new HraciPlocha();
 		hp.pripravHraciPlochu();
-		getContentPane().add(hp, "Center");
 		
+		getContentPane().add(hp, "Center");
 		hp.setVisible(true);
 		this.revalidate();
-		hp.repaint();
+		this.repaint();
 		
 		
 	}
@@ -42,9 +46,7 @@ public class FlappyGameMain extends JFrame{
 			public void run() {
 				FlappyGameMain app = new FlappyGameMain();
 				app.initGUI();
-				this.revalidate();
-				//this.
-			}
+				app.spust();			}
 		});
 
 	}

@@ -1,5 +1,6 @@
 package hra;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -58,6 +59,11 @@ public class Hrac {
 	
 	public void paint(Graphics g){
 		g.drawImage(img, x, y, null);
+		
+		if (HraciPlocha.DEBUG){
+			g.setColor(Color.BLACK);
+			g.drawString("x="+ x + "y=" + y + "rychlost je " + rychlost, x, y-5);
+		}
 	}
 	
 	

@@ -1,5 +1,6 @@
 package hra;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,9 +16,7 @@ import obrazek.Obrazek;
 import obrazek.ZdrojObrazkuSoubor;
 
 public class HraciPlocha extends JPanel{
-	/**
-	 * 
-	 */
+	public static final boolean DEBUG = true;
 	private static final long serialVersionUID = 1L;
 	public static final int VYSKA = 800;
 	public static final int SIRKA = 600;
@@ -27,7 +26,7 @@ public class HraciPlocha extends JPanel{
 	//r\chlost behu pozadi
 	public static final int RYCHLOST = -2;
 	
-	
+	private Hrac hrac;
 	private BufferedImage imgPozadi;
 	private Timer casovacAnimace;
 	private boolean pauza = false;
@@ -35,6 +34,7 @@ public class HraciPlocha extends JPanel{
 	private int posunPozadiX = 0;
 	
 	public HraciPlocha(){
+		//TODO
 		ZdrojObrazkuSoubor z = new ZdrojObrazkuSoubor();
 		z.naplnMapu();
 		z.setZdroj(Obrazek.POZADI.getKlic());
@@ -45,6 +45,19 @@ public class HraciPlocha extends JPanel{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		z.setZdroj(Obrazek.HRAC.getKlic());
+		BufferedImage imgHrac;
+		//hrac = new Hrac(null);
+		
+		try {
+			imgHrac = z.getObrazek();
+			hrac = new Hrac(imgHrac);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		
 		
 	}
@@ -58,6 +71,12 @@ public class HraciPlocha extends JPanel{
 		//druhe je posunuto o sirku obrazku
 		g.drawImage(imgPozadi, posunPozadiX+imgPozadi.getWidth(), 0, null);
 		
+		if (HraciPlocha.DEBUG){
+			g.setColor(Color.BLACK);
+			g.drawString("posun pozadi x= "+ posunPozadiX, 0, 10);
+		}
+		
+		hrac.paint(g);
 		
 		
 	}
@@ -67,7 +86,7 @@ public class HraciPlocha extends JPanel{
 	private void posun(){
 		if (! pauza && hraBezi){
 			//TODO
-			
+			hrac.posun();
 			
 			
 			//posun pozce pozadi hraci plochy
@@ -103,14 +122,16 @@ public class HraciPlocha extends JPanel{
 			@Override
 			public void mousePressed(MouseEvent e) {
 				if (e.getButton() == MouseEvent.BUTTON1) {
-					//skace hrac
-					//
+					//skok
+					hrac.skok();
+					
 				}
 				
 				if (e.getButton() == MouseEvent.BUTTON3) {
 					//pauza
 					if (hraBezi) {
 						if (pauza) {
+							
 							pauza = false;
 						} else {
 							pauza = true;
