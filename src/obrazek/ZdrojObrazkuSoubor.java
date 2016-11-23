@@ -14,6 +14,7 @@ public class ZdrojObrazkuSoubor extends ZdrojObrazku{
 	public void naplnMapu() {
 		getMapa().put(Obrazek.POZADI.getKlic(), "pozadi3.png");
 		getMapa().put(Obrazek.HRAC.getKlic(), "player.png");
+		getMapa().put(Obrazek.ZED.getKlic(), "wall.png");
 		//TODO hrac zed bonus
 	}
 

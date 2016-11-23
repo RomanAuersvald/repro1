@@ -15,16 +15,23 @@ import javax.swing.Timer;
 import obrazek.Obrazek;
 import obrazek.ZdrojObrazkuSoubor;
 
-public class HraciPlocha extends JPanel{
+public class HraciPlocha extends JPanel {
 	public static final boolean DEBUG = true;
 	private static final long serialVersionUID = 1L;
 	public static final int VYSKA = 800;
 	public static final int SIRKA = 600;
-	
-	
-	
-	//r\chlost behu pozadi
+
+	// r\chlost behu pozadi
 	public static final int RYCHLOST = -2;
+	
+	
+	//musí být alespoò tøi zdi, jinak se první zeï nestihne posunout a vygenerovat se znovu vpravo
+	public static final int POCET_ZDI = 4;
+	
+	private SeznamZdi seznamZdi;
+	private Zed aktualniZed;
+	private Zed predchoziZed;
+	
 	
 	private Hrac hrac;
 	private BufferedImage imgPozadi;
@@ -32,13 +39,13 @@ public class HraciPlocha extends JPanel{
 	private boolean pauza = false;
 	private boolean hraBezi = false;
 	private int posunPozadiX = 0;
-	
-	public HraciPlocha(){
-		//TODO
+
+	public HraciPlocha() {
+		// TODO
 		ZdrojObrazkuSoubor z = new ZdrojObrazkuSoubor();
 		z.naplnMapu();
 		z.setZdroj(Obrazek.POZADI.getKlic());
-		
+
 		try {
 			imgPozadi = z.getObrazek();
 		} catch (IOException e) {
@@ -47,8 +54,8 @@ public class HraciPlocha extends JPanel{
 		}
 		z.setZdroj(Obrazek.HRAC.getKlic());
 		BufferedImage imgHrac;
-		//hrac = new Hrac(null);
-		
+		// hrac = new Hrac(null);
+
 		try {
 			imgHrac = z.getObrazek();
 			hrac = new Hrac(imgHrac);
@@ -57,52 +64,74 @@ public class HraciPlocha extends JPanel{
 			e.printStackTrace();
 		}
 		
+		z.setZdroj(Obrazek.ZED.getKlic());
+		BufferedImage imgZed;
+
+		try {
+			imgZed = z.getObrazek();
+			Zed.setObrazek(imgZed);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
-		
-		
+		seznamZdi = new SeznamZdi();
+
 	}
 	
-	public void paint(Graphics g){
+	
+	private void vyrobZdi(int pocet){
+		Zed zed;
+		int vzdalenost = HraciPlocha.SIRKA;
+		for(int i=0; i<pocet;i++){
+			zed = new Zed(vzdalenost);
+			seznamZdi.add(zed);
+			vzdalenost = vzdalenost + (HraciPlocha.SIRKA/2);
+			
+		}
+		vzdalenost = vzdalenost -HraciPlocha.SIRKA - Zed.SIRKA;
+		Zed.setVzdalenostPosledniZdi(vzdalenost);
+	}
+
+	public void paint(Graphics g) {
 		super.paint(g);
-		
-		//dve pozadi za sebe pro plynulé pøechody
-		//prvni
+
+		// dve pozadi za sebe pro plynulé pøechody
+		// prvni
 		g.drawImage(imgPozadi, posunPozadiX, 0, null);
-		//druhe je posunuto o sirku obrazku
-		g.drawImage(imgPozadi, posunPozadiX+imgPozadi.getWidth(), 0, null);
-		
-		if (HraciPlocha.DEBUG){
+		// druhe je posunuto o sirku obrazku
+		g.drawImage(imgPozadi, posunPozadiX + imgPozadi.getWidth(), 0, null);
+
+		if (HraciPlocha.DEBUG) {
 			g.setColor(Color.BLACK);
-			g.drawString("posun pozadi x= "+ posunPozadiX, 0, 10);
+			g.drawString("posun pozadi x= " + posunPozadiX, 0, 10);
 		}
 		
+		for (Zed zed : seznamZdi) {
+			zed.paint(g);
+		}
+
 		hrac.paint(g);
-		
-		
+
 	}
-	
-	
-	
-	private void posun(){
-		if (! pauza && hraBezi){
-			//TODO
+
+	private void posun() {
+		if (!pauza && hraBezi) {
+			// TODO
+			for (Zed zed : seznamZdi) {
+				zed.posun();
+			}
 			hrac.posun();
-			
-			
-			//posun pozce pozadi hraci plochy
-			posunPozadiX = posunPozadiX+HraciPlocha.RYCHLOST;
-			//kdyz se pozadi cele doposouva zacni od zacatku
-			if(posunPozadiX == -imgPozadi.getWidth()){
+
+			// posun pozce pozadi hraci plochy
+			posunPozadiX = posunPozadiX + HraciPlocha.RYCHLOST;
+			// kdyz se pozadi cele doposouva zacni od zacatku
+			if (posunPozadiX == -imgPozadi.getWidth()) {
 				posunPozadiX = 0;
-			}	
+			}
 		}
 	}
-	
-	
-	
-	
-	
-	private void spustHru(){
+
+	private void spustHru() {
 		casovacAnimace = new Timer(20, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -110,28 +139,27 @@ public class HraciPlocha extends JPanel{
 				posun();
 			}
 		});
-		
+
 		hraBezi = true;
 		casovacAnimace.start();
 	}
-	
-	
-	public void pripravHraciPlochu(){
+
+	public void pripravHraciPlochu() {
 		this.addMouseListener(new MouseAdapter() {
-			
+
 			@Override
 			public void mousePressed(MouseEvent e) {
 				if (e.getButton() == MouseEvent.BUTTON1) {
-					//skok
+					// skok
 					hrac.skok();
-					
+
 				}
-				
+
 				if (e.getButton() == MouseEvent.BUTTON3) {
-					//pauza
+					// pauza
 					if (hraBezi) {
 						if (pauza) {
-							
+
 							pauza = false;
 						} else {
 							pauza = true;
@@ -141,12 +169,9 @@ public class HraciPlocha extends JPanel{
 						spustHru();
 					}
 				}
-				
-				
-				
-				
+
 			}
-			
+
 		});
 		setSize(SIRKA, VYSKA);
 	}
@@ -154,11 +179,8 @@ public class HraciPlocha extends JPanel{
 	protected void pripravNovouHru() {
 		// TODO Auto-generated method stub
 		
+		vyrobZdi(POCET_ZDI);
+		
 	}
-	
-	
-	
-	
-	
-	
+
 }
